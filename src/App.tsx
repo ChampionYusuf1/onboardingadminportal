@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 
-import { generateClient } from "aws-amplify/api";
 
 
 
@@ -9,8 +7,6 @@ import { type AuthUser } from "aws-amplify/auth";
 import { type UseAuthenticator } from "@aws-amplify/ui-react-core";
 import "@aws-amplify/ui-react/styles.css";
 
-const initialState: CreateTodoInput = { name: "", description: "" };
-const client = generateClient();
 
 type AppProps = {
   signOut?: UseAuthenticator["signOut"]; //() => void;
