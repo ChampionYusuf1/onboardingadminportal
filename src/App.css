@@ -1,42 +1,100 @@
+/* Resetting default browser styles */
+html,
+body,
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff; /* Set to white background */
 }
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+ 
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 480px; /* Set a max-width for larger screens */
+  margin: auto;
+  padding: 20px;
+  box-sizing: border-box;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+ 
+form {
+  width: 100%;
+  background-color: #f4f4f4; /* Light gray background for the form */
+  color: #333; /* Dark text color for the form */
+  padding: 20px;
+  border-radius: 8px;
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+ 
+/* Styling labels and inputs */
+label {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 1em;
 }
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+ 
+label input,
+label select {
+  padding: 8px;
+  margin-top: 4px; /* Add a little space between the label and the input */
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px;
+  background: #fff; /* White background for inputs */
+  color: #333; /* Dark text color for inputs */
+}
+ 
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 16px;
+  background: #007bff; /* Blue button background */
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+}
+ 
+button:hover {
+  background: #0056b3; /* Darker blue button background on hover */
+}
+ 
+h2,
+h3 {
+  width: 100%;
+  text-align: left;
+}
+ 
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr; /* Stacks inputs in a single column on smaller screens */
   }
-  to {
-    transform: rotate(360deg);
-  }
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+ 
+h1,
+h2,
+p {
+  color: #333; /* Dark text color */
+  margin: 0 0 20px 0;
 }
-
-.card {
-  padding: 2em;
+ 
+.section h2 {
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
-
-.read-the-docs {
-  color: #888;
+ 
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* One column layout */
+  gap: 20px;
+  width: 100%;
+}
+ 
+.label-full {
+  grid-column: 1 / -1; /* Makes sure the label takes full width */
 }
