@@ -1,18 +1,6 @@
-
-
-
-
-import { withAuthenticator, Button, Heading } from "@aws-amplify/ui-react";
-import { type AuthUser } from "aws-amplify/auth";
-import { type UseAuthenticator } from "@aws-amplify/ui-react-core";
-import "@aws-amplify/ui-react/styles.css";
 import React, { useState, useEffect } from "react";
 import "./App.css";
-
-type AppProps = {
-  signOut?: UseAuthenticator["signOut"]; //() => void;
-  user?: AuthUser;
-};
+ 
 function MerchantAccountDetails({ account }) {
   return (
     <div className="merchant-account">
@@ -76,7 +64,8 @@ function PrincipalOwnerDetails({ account }) {
     </div>
   );
 }
-const App: React.FC<AppProps> = ({ signOut, user }) => {
+ 
+function App() {
   const [merchantAccounts, setMerchantAccounts] = useState([]);
   const [newMerchantAccount, setNewMerchantAccount] = useState({
     addressLine2: "",
@@ -125,6 +114,7 @@ const App: React.FC<AppProps> = ({ signOut, user }) => {
     state: "",
     streetAddress: "",
   });
+ 
   useEffect(() => {
     fetch("http://localhost:3001/api/bankaccount") // Adjust if your endpoint is different
       .then((response) => {
@@ -183,17 +173,494 @@ const App: React.FC<AppProps> = ({ signOut, user }) => {
         );
       });
   }, []); // Add a comma here
-  
-  
  
+  const deleteMerchantAccount = (id) => {
+    fetch(`http://localhost:3001/api/merchantaccount/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        // Remove the deleted account from state
+        setMerchantAccounts(
+          merchantAccounts.filter((account) => account.id !== id)
+        );
+      })
+      .catch((error) => {
+        console.error(
+          "There has been a problem with your delete operation:",
+          error
+        );
+      });
+  };
+  // new account
+  const handleNewMerchantAccountChange = (e) => {
+    const { name, value } = e.target;
+    setNewMerchantAccount((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+  const handleNewBankAccountChange = (e) => {
+    const { name, value } = e.target;
+    setNewBankAccount((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+ 
+  const handlePrincipalOwnerChange = (e) => {
+    const { name, value } = e.target;
+    setNewPrincipalOwner((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+ 
+  // merchant account simbit button
+  const handleNewAccountSubmit = (e) => {
+    e.preventDefault();
 
-  
+    // Compile data into a single object
+    const fullMerchantAccountData = {
+        merchantDetails: newMerchantAccount,
+        bankDetails: newBankAccount,
+        ownerDetails: newPrincipalOwner,
+    };
 
+    // Post the data to the createFullMerchant endpoint
+    fetch("http://localhost:3001/api/createFullMerchant", { // Adjust this URL based on your server configuration
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(fullMerchantAccountData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Success:", data);
+        // Here you might want to update your application state to include the new merchant account
+        // For example, you might refresh the list of merchant accounts from the server
+        // or add the newly created account to your state directly if the API returns it.
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
+
+    // Reset form fields after submission or upon successful creation
+    // This is a simple way; you might want to do this only if the request succeeds.
+    setNewMerchantAccount({
+        // Reset fields to initial state
+        addressLine2: "",
+        averageTransactionAmount: 0,
+        businessPhone: "",
+        city: "",
+        corporateName: "",
+        country: "",
+        dbaName: "",
+        estimatedMonthlyVolume: 0,
+        postalZipCode: "",
+        salesTax: "",
+        state: "",
+        streetAddress: "",
+        tin: "",
+        w9EntityType: "",
+        websiteUrl: "",
+        yearEstablished: new Date().getFullYear(),
+    });
+    setNewBankAccount({
+
+         accountNumber: "",
+    bankName: "",
+    routingNumber: "",
+    signature: "",
+    merchantAccountID: 0, // Note: This field may not be necessary for the form reset, as it is likely set programmatically based on the created merchant account
+    id: 0, // Similar to merchantAccountID, this may not be necessary to reset
+    });
+    setNewPrincipalOwner({
+      addressLine2: "",
+      city: "",
+      country: "",
+      dateOfBirth: "",
+      driversLicenseExpiryDate: "",
+      driversLicenseIssueDate: "",
+      driversLicenseNumber: "",
+      email: "",
+      firstName: "",
+      lastName: "",
+      merchantAccountID: 0, // Note: This field may not be necessary for the form reset, as it is likely set programmatically based on the created merchant account
+      middleName: "",
+      percentageOfOwnership: 0,
+      postalCode: "",
+      ssn: "",
+      state: "",
+      streetAddress: "",
+    });
+};
+
+ 
   return (
-    <div style={styles.container}>
-      <Heading level={1}>Hello {user?.username}</Heading>
-      <Button onClick={signOut}>Sign out</Button>
-      <h2>Amplify Todos</h2>
+    <div className="App">
+      {/* Form to create a new merchant account */}
+      <form onSubmit={handleNewAccountSubmit}>
+        <h2>Create a New Merchant Account</h2>
+        {/* Add input fields for each property of MerchantAccount */}
+        {/* For example: */}
+        <h3>Merchant Info</h3>
+        <label>
+          Corporate Name:
+          <input
+            type="text"
+            name="corporateName"
+            value={newMerchantAccount.corporateName}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          TIN:
+          <input
+            type="text"
+            name="tin"
+            value={newMerchantAccount.tin}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          W-9 Entity Type:
+          <input
+            type="text"
+            name="w9EntityType"
+            value={newMerchantAccount.w9EntityType}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Street Address:
+          <input
+            type="text"
+            name="streetAddress"
+            value={newMerchantAccount.streetAddress}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Street Address Line 2:
+          <input
+            type="text"
+            name="addressLine2"
+            value={newMerchantAccount.addressLine2}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          City:
+          <input
+            type="text"
+            name="city"
+            value={newMerchantAccount.city}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          State:
+          <input
+            type="text"
+            name="state"
+            value={newMerchantAccount.state}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Zip Code:
+          <input
+            type="text"
+            name="postalZipCode"
+            value={newMerchantAccount.postalZipCode}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Country:
+          <input
+            type="text"
+            name="country"
+            value={newMerchantAccount.country}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Business Phone No:
+          <input
+            type="text"
+            name="businessPhone"
+            value={newMerchantAccount.businessPhone}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Sales Tax:
+          <input
+            type="text"
+            name="salesTax"
+            value={newMerchantAccount.salesTax}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Estimated Monthly Volume:
+          <input
+            type="text"
+            name="estimatedMonthlyVolume"
+            value={newMerchantAccount.estimatedMonthlyVolume}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Average Transaction Amount:
+          <input
+            type="text"
+            name="averageTransactionAmount"
+            value={newMerchantAccount.averageTransactionAmount}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Website URL:
+          <input
+            type="text"
+            name="websiteUrl"
+            value={newMerchantAccount.websiteUrl}
+            onChange={handleNewMerchantAccountChange}
+            required
+          />
+        </label>
+        <h3>Banking Info</h3>
+        <label>
+          Bank Name:
+          <input
+            type="text"
+            name="bankName"
+            value={newBankAccount.bankName}
+            onChange={handleNewBankAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Account No:
+          <input
+            type="text"
+            name="accountNumber"
+            value={newBankAccount.accountNumber}
+            onChange={handleNewBankAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Routing No:
+          <input
+            type="text"
+            name="routingNumber"
+            value={newBankAccount.routingNumber}
+            onChange={handleNewBankAccountChange}
+            required
+          />
+        </label>
+        <label>
+          Signature:
+          <input
+            type="text"
+            name="signature"
+            value={newBankAccount.signature}
+            onChange={handleNewBankAccountChange}
+            required
+          />
+        </label>
+        <h3>Principal Owner Info</h3>
+        <label>
+          First Name:
+          <input
+            type="text"
+            name="firstName"
+            value={newPrincipalOwner.firstName}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Middle Name:
+          <input
+            type="text"
+            name="middleName"
+            value={newPrincipalOwner.middleName}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Last Name:
+          <input
+            type="text"
+            name="lastName"
+            value={newPrincipalOwner.lastName}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Email Address:
+          <input
+            type="text"
+            name="email"
+            value={newPrincipalOwner.email}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Percentage of Ownership:
+          <input
+            type="text"
+            name="percentageOfOwnership"
+            value={newPrincipalOwner.percentageOfOwnership}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Street Address:
+          <input
+            type="text"
+            name="streetAddress"
+            value={newPrincipalOwner.streetAddress}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Street Address Line 2:
+          <input
+            type="text"
+            name="addressLine2"
+            value={newPrincipalOwner.addressLine2}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          City:
+          <input
+            type="text"
+            name="city"
+            value={newPrincipalOwner.city}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          State:
+          <input
+            type="text"
+            name="state"
+            value={newPrincipalOwner.state}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Postal Code:
+          <input
+            type="text"
+            name="postalCode"
+            value={newPrincipalOwner.postalCode}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Country:
+          <input
+            type="text"
+            name="country"
+            value={newPrincipalOwner.country}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Date of Birth:
+          <input
+            type="date"
+            name="dateOfBirth"
+            value={newPrincipalOwner.dateOfBirth}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          SSN:
+          <input
+            type="text"
+            name="ssn"
+            value={newPrincipalOwner.ssn}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Driver's License No:
+          <input
+            type="text"
+            name="driversLicenseNumber"
+            value={newPrincipalOwner.driversLicenseNumber}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Driver's License Issue Date:
+          <input
+            type="date"
+            name="driversLicenseIssueDate"
+            value={newPrincipalOwner.driversLicenseIssueDate}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+        <label>
+          Driver's License Expiry Date:
+          <input
+            type="date"
+            name="driversLicenseExpiryDate"
+            value={newPrincipalOwner.driversLicenseExpiryDate}
+            onChange={handlePrincipalOwnerChange}
+            required
+          />
+        </label>
+ 
+        {/* Repeat for each field */}
+        <button type="submit">Create Merchant Account</button>
+      </form>
+ 
+      {/* ... rest of the app, including merchant accounts list */}
       <h1>Merchant Account Administration</h1>
       <div className="merchant-accounts-section">
         <div className="merchant-accounts-list">
@@ -201,43 +668,16 @@ const App: React.FC<AppProps> = ({ signOut, user }) => {
             <div key={account.id} className="merchant-account">
               <MerchantAccountDetails key={account.id} account={account} />
               {/* Add a delete button for each merchant account */}
-              
+              <button onClick={() => deleteMerchantAccount(account.id)}>
+                Delete
+              </button>
               {/* You can add more details here */}
             </div>
           ))}
         </div>
       </div>
-     
     </div>
   );
-};
-
-const styles = {
-  container: {
-    width: 400,
-    margin: "0 auto",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    padding: 20,
-  },
-  todo: { marginBottom: 15 },
-  input: {
-    border: "none",
-    backgroundColor: "#ddd",
-    marginBottom: 10,
-    padding: 8,
-    fontSize: 18,
-  },
-  todoName: { fontSize: 20, fontWeight: "bold" },
-  todoDescription: { marginBottom: 0 },
-  button: {
-    backgroundColor: "black",
-    color: "white",
-    outline: "none",
-    fontSize: 18,
-    padding: "12px 0px",
-  },
-} as const;
-
-export default withAuthenticator(App);
+}
+ 
+export default App;
