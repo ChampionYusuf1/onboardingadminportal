@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { Login } from "./Login";
 interface MerchantAccount {
@@ -152,7 +152,9 @@ function App() {
     websiteUrl: "",
     yearEstablished: new Date().getFullYear(),
   });
-  const [bankAccounts, setBankAccount] = useState<BankAccount[]>([]);
+  const [, setBankAccount] = useState<BankAccount[]>([]);
+  //  const [bankAccounts, setBankAccount] = useState<BankAccount[]>([]);
+
   const [newBankAccount, setNewBankAccount] = useState({
     accountNumber: "",
     bankName: "",
@@ -161,7 +163,8 @@ function App() {
     merchantAccountID: 0,
     id: 0,
   });
-  const [principalOwners, setPrincipalOwner] = useState<PrincipalOwner[]>([]);
+ // const [principalOwners, setPrincipalOwner] = useState<PrincipalOwner[]>([]);
+ const [, setPrincipalOwner] = useState<PrincipalOwner[]>([]);
   const [newPrincipalOwner, setNewPrincipalOwner] = useState({
     addressLine2: "",
     city: "",
@@ -740,6 +743,8 @@ function App() {
           {merchantAccounts.map((account: { id: string }) => (
             <div key={account.id} className="merchant-account">
               <MerchantAccountDetails key={account.id} account={account} />
+                <BankAccountDetails key={account.id} account={account} />
+                  <PrincipalOwnerDetails key={account.id} account={account} />
               {/* Add a delete button for each merchant account */}
               <button onClick={() => deleteMerchantAccount(account.id)}>
                 Delete
