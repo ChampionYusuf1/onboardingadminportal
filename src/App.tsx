@@ -53,6 +53,7 @@ interface PrincipalOwner {
   createdAt: string;
   // add other relevant properties
 }
+const backendUrl = 'https://main.ddf5kpcmp1ss0.amplifyapp.com/api';
 function MerchantAccountDetails({ account }: { account: any }) {
   return (
     <div className="merchant-account">
@@ -246,7 +247,7 @@ function App() {
  
 
   const deleteMerchantAccount = (id: any) => {
-    fetch(`http://localhost:3001/api/merchantaccount/${id}`, {
+    fetch(`${backendUrl}/merchantaccount`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -306,8 +307,8 @@ function App() {
     };
 
     // Post the data to the createFullMerchant endpoint
-    fetch("http://localhost:3001/api/createFullMerchant", { // Adjust this URL based on your server configuration
-        method: "POST",
+    fetch(`${backendUrl}/merchantaccount`, {
+      method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
