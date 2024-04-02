@@ -55,6 +55,7 @@ interface PrincipalOwner {
 }
 const backendUrl = 'https://main.ddf5kpcmp1ss0.amplifyapp.com/api';
 const localhostUrl = 'http://localhost:3001/api';
+console.log(localhostUrl)
 function MerchantAccountDetails({ account }: { account: any }) {
   return (
     <div className="merchant-account">
