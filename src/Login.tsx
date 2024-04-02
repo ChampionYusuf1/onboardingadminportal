@@ -12,7 +12,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://main.d150y56uv3yg4i.amplifyapp.com/login", {
+      const response = await fetch("https://main.ddf5kpcmp1ss0.amplifyapp.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
