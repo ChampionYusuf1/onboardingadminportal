@@ -98,3 +98,7 @@ p {
 .label-full {
   grid-column: 1 / -1; /* Makes sure the label takes full width */
 }
+.merchant-account-list {
+  /* Other styles for your merchant account list */
+  color: white; /* Set text color to white */
+}

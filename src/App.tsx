@@ -1,7 +1,59 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
- 
-function MerchantAccountDetails({ account }) {
+import { Login } from "./Login";
+interface MerchantAccount {
+  id: string;
+  corporateName: string;
+  yearEstablished: number;
+  dbaName: string;
+  tin: string;
+  w9EntityType: string;
+  streetAddress: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  postalZipCode: string;
+  country: string;
+  businessPhone: string;
+  salesTax: number;
+  estimatedMonthlyVolume: number;
+  averageTransactionAmount: number;
+  websiteUrl: string;
+  createdAt: string;
+}
+
+interface BankAccount {
+  id: string;
+  bankName: string;
+  accountNumber: string;
+  routingNumber: string;
+  signature: string;
+  createdAt: string;
+  // add other relevant properties
+}
+
+interface PrincipalOwner {
+  id: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  email: string;
+  percentageOfOwnership: number;
+  streetAddress: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  dateOfBirth: string;
+  ssn: string;
+  driversLicenseNumber: string;
+  driversLicenseIssueDate: string;
+  driversLicenseExpiryDate: string;
+  createdAt: string;
+  // add other relevant properties
+}
+function MerchantAccountDetails({ account }: { account: any }) {
   return (
     <div className="merchant-account">
       <h2>Merchant: {account.corporateName}</h2>
@@ -26,7 +78,7 @@ function MerchantAccountDetails({ account }) {
   );
 }
  
-function BankAccountDetails({ account }) {
+function BankAccountDetails({ account }: { account: any }) {
   return (
     <div className="bank-account">
       <h3>Banking Info</h3>
@@ -40,7 +92,7 @@ function BankAccountDetails({ account }) {
   );
 }
  
-function PrincipalOwnerDetails({ account }) {
+function PrincipalOwnerDetails({ account }: { account: any }) {
   return (
     <div className="principal-owner">
       <h3>Principal Owner Info</h3>
@@ -66,7 +118,22 @@ function PrincipalOwnerDetails({ account }) {
 }
  
 function App() {
-  const [merchantAccounts, setMerchantAccounts] = useState([]);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+
+  const handleLoginSuccess = (token: string) => {
+    localStorage.setItem('token', token);
+    setToken(token);
+  };
+
+  if (!token) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  // Rest of your component...
+
+ 
+  
+  const [merchantAccounts, setMerchantAccounts] = useState<MerchantAccount[]>([]);
   const [newMerchantAccount, setNewMerchantAccount] = useState({
     addressLine2: "",
     averageTransactionAmount: 0,
@@ -85,7 +152,7 @@ function App() {
     websiteUrl: "",
     yearEstablished: new Date().getFullYear(),
   });
-  const [bankAccount, setBankAccount] = useState([]);
+  const [bankAccounts, setBankAccount] = useState<BankAccount[]>([]);
   const [newBankAccount, setNewBankAccount] = useState({
     accountNumber: "",
     bankName: "",
@@ -94,7 +161,7 @@ function App() {
     merchantAccountID: 0,
     id: 0,
   });
-  const [principalOwner, setPrincipalOwner] = useState([]);
+  const [principalOwners, setPrincipalOwner] = useState<PrincipalOwner[]>([]);
   const [newPrincipalOwner, setNewPrincipalOwner] = useState({
     addressLine2: "",
     city: "",
@@ -174,9 +241,14 @@ function App() {
       });
   }, []); // Add a comma here
  
-  const deleteMerchantAccount = (id) => {
+
+  const deleteMerchantAccount = (id: any) => {
     fetch(`http://localhost:3001/api/merchantaccount/${id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, // Add this line
+      },
     })
       .then((response) => {
         if (!response.ok) {
@@ -194,15 +266,16 @@ function App() {
         );
       });
   };
+
   // new account
-  const handleNewMerchantAccountChange = (e) => {
+  const handleNewMerchantAccountChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setNewMerchantAccount((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
-  const handleNewBankAccountChange = (e) => {
+  const handleNewBankAccountChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setNewBankAccount((prevState) => ({
       ...prevState,
@@ -210,7 +283,7 @@ function App() {
     }));
   };
  
-  const handlePrincipalOwnerChange = (e) => {
+  const handlePrincipalOwnerChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setNewPrincipalOwner((prevState) => ({
       ...prevState,
@@ -219,7 +292,7 @@ function App() {
   };
  
   // merchant account simbit button
-  const handleNewAccountSubmit = (e) => {
+  const handleNewAccountSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
     // Compile data into a single object
@@ -664,7 +737,7 @@ function App() {
       <h1>Merchant Account Administration</h1>
       <div className="merchant-accounts-section">
         <div className="merchant-accounts-list">
-          {merchantAccounts.map((account) => (
+          {merchantAccounts.map((account: { id: string }) => (
             <div key={account.id} className="merchant-account">
               <MerchantAccountDetails key={account.id} account={account} />
               {/* Add a delete button for each merchant account */}
