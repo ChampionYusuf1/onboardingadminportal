@@ -16,5 +16,23 @@
         "signin97838471": {}
       }
     }
+  },
+  "test": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-signin-test-52396-authRole",
+      "UnauthRoleArn": "arn:aws:iam::058264106526:role/amplify-signin-test-52396-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::058264106526:role/amplify-signin-test-52396-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-signin-test-52396-deployment",
+      "UnauthRoleName": "amplify-signin-test-52396-unauthRole",
+      "StackName": "amplify-signin-test-52396",
+      "StackId": "arn:aws:cloudformation:us-east-1:058264106526:stack/amplify-signin-test-52396/2ed71680-f136-11ee-8fa0-12352f706b5d",
+      "AmplifyAppId": "d150y56uv3yg4i"
+    },
+    "categories": {
+      "auth": {
+        "signin97838471": {}
+      }
+    }
   }
 }
