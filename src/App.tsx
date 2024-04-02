@@ -53,7 +53,7 @@ interface PrincipalOwner {
   createdAt: string;
   // add other relevant properties
 }
-const backendUrl = 'https://main.ddf5kpcmp1ss0.amplifyapp.com/api';
+const backendUrl = 'https://main.d150y56uv3yg4i.amplifyapp.com/api';
 const localhostUrl = 'http://localhost:3001/api';
 console.log(localhostUrl)
 function MerchantAccountDetails({ account }: { account: any }) {
